@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="homographypnp.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -114,7 +115,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_core410d.lib;opencv_imgcodecs410d.lib;opencv_highgui410d.lib;opencv_aruco410d.lib;opencv_calib3d410d.lib;opencv_ccalib410d.lib;opencv_video410d.lib;opencv_videoio410d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_core410d.lib;opencv_imgcodecs410d.lib;opencv_highgui410d.lib;opencv_aruco410d.lib;opencv_calib3d410d.lib;opencv_ccalib410d.lib;opencv_video410d.lib;opencv_videoio410d.lib;opencv_imgproc410d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OPENCV4_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

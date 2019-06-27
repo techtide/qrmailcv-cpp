@@ -20,13 +20,15 @@ using namespace cv;
 string type2str(int type);
 
 // For the desktop camera I'm using - the Logitech HD Webcam C270.
-double hFieldOfView = 60.000; // Degrees
-double vFieldOfView = 46.826; // Degrees
+/*double hFieldOfView = 60; // Degrees
+double vFieldOfView = 46.826; // Degrees*/
+double hFieldOfView = 60;
+double vFieldOfView = 46.826;
 double focalLength = 4.000; // Milimeters
 
 // TO-DO: FIND THIS AND POPULATE ObjectPoints correctly as discussed in IRC
 // Measure this carefully as it corresponds to how it is shown on the screen, use it for objectPoints.
-double arucoMarkerLength = 0; // Milimeters
+double arucoMarkerLength = 100; // Milimeters
 
 cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_ARUCO_ORIGINAL);
 cv::Ptr<cv::aruco::DetectorParameters> detectorParams = cv::aruco::DetectorParameters::create();
@@ -62,11 +64,16 @@ void process(Mat& image, vector<vector<Point2f>> imagePoints) {
 		double fy = (double)height / (double)(2 * tan(vFieldOfView * 3.14159 / 180));
 		double cy = (double)height / 2;
 
-		Mat cameraMatrix = (cv::Mat_<double>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
+		//Mat cameraMatrix = (cv::Mat_<double>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
+		// THESE CAMERA MATRIX CALCULATIONS WERE WRONG ^^^ - THE ONE BELOW IS TAKEN FROM A YAML FILE I FOUND ON INTERNET
+		// EVENTUALLY MAKE CALIBRATION GET CAMERA MATRIX BY ITSELF BUT FIRST UNDERSTAND PROPERLY THE CAMERA MATRIX
+		Mat cameraMatrix = (cv::Mat_<double>(3, 3) << 5.2036144200036904e+02, 0, 3.0255876920712751e+02, 0,
+			5.1834337983691967e+02, 2.4278187493920279e+02, 0, 0, 1);
 		// std::cout << cameraMatrix.channels() << std::endl;
 		// std::cout << "Type " << type2str(cameraMatrix.type()) << std::endl;
 
-		cv::Mat distCoeffs = Mat::zeros(8, 1, cv::DataType<double>::type);
+		//cv::Mat distCoeffs = Mat::zeros(8, 1, cv::DataType<double>::type);
+		Mat distCoeffs = (cv::Mat_<double>(5, 1) << 1.0303738535136008e-01, -2.7013831868935040e-01, -2.5505644429536711e-03, -6.9928818760003142e-03, 1.6547444868453295e-01);
 
 		//int npoints = std::max(objectPoints.checkVector(3, CV_32F), objectPoints.checkVector(3, CV_64F));
 		//std::cout << "npoints camera matrix " << npoints << std::endl;
@@ -80,7 +87,8 @@ void process(Mat& image, vector<vector<Point2f>> imagePoints) {
 
 		if (!imagePoints.empty()) {
 			// off true once fixed
-			cv::solvePnP(objectPoints, imagePoints.at(0), cameraMatrix, distCoeffs, rvec, tvec);
+			cv::solvePnP(objectPoints, imagePoints.at(0), cameraMatrix, distCoeffs, rvec, tvec, false);
+			cv::drawFrameAxes(image, cameraMatrix, distCoeffs, rvec, tvec, 100);
 		}
 		else {
 			std::cout << "No arucos found, so PnP cannot be solved" << std::endl;

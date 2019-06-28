@@ -23,7 +23,8 @@ string type2str(int type);
 /*double hFieldOfView = 60; // Degrees
 double vFieldOfView = 46.826; // Degrees*/
 double hFieldOfView = 60;
-double vFieldOfView = 46.826;
+double vFieldOfView = 46.826;	// This calculation is wrong probably, causing the problems before. Find the right way to calculate this. For later!
+// ^ required to change the camera specs like for the hololens
 double focalLength = 4.000; // Milimeters
 
 // TO-DO: FIND THIS AND POPULATE ObjectPoints correctly as discussed in IRC
@@ -61,8 +62,11 @@ void process(Mat& image, vector<vector<Point2f>> imagePoints) {
 
 		double fx = (double)(width / 2 * tan(hFieldOfView * 3.14159 / 180));
 		double cx = (double)width / 2;
-		double fy = (double)height / (double)(2 * tan(vFieldOfView * 3.14159 / 180));
+		double fy = (double)height / (double)(2 * atan(vFieldOfView * 3.14159 / 180));	// This is what messed up
 		double cy = (double)height / 2;
+
+		std::cout << "Height " << height << std::endl;
+		std::cout << fx << " " << cx << " " << fy << " " << cy << " " << std::endl;
 
 		//Mat cameraMatrix = (cv::Mat_<double>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
 		// THESE CAMERA MATRIX CALCULATIONS WERE WRONG ^^^ - THE ONE BELOW IS TAKEN FROM A YAML FILE I FOUND ON INTERNET
@@ -77,7 +81,6 @@ void process(Mat& image, vector<vector<Point2f>> imagePoints) {
 
 		//int npoints = std::max(objectPoints.checkVector(3, CV_32F), objectPoints.checkVector(3, CV_64F));
 		//std::cout << "npoints camera matrix " << npoints << std::endl;
-
 
 		vector<Point2d> imagePointsDouble = { (Point2d) (imagePoints.at(0).at(0)), (Point2d)(imagePoints.at(0).at(1)),
 											  (Point2d)(imagePoints.at(0).at(2)), (Point2d)(imagePoints.at(0).at(3))};
